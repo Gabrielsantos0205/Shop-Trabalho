@@ -34,41 +34,54 @@
 
             <div class="grid gap-5" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
                 @forelse ($produtos as $produto)
-                    <div class="relative bg-white border border-gray-200 rounded-xl p-5 pt-6">
+                    <div class="relative bg-white border border-gray-200 rounded-xl overflow-hidden">
 
-                        <div style="font-family: 'IBM Plex Mono', monospace; transform: rotate(3deg);"
-                             class="absolute -top-2.5 right-4 text-white text-xs font-medium px-2.5 py-1 rounded
-                                    {{ $produto->estoque > 0 ? 'bg-[#2D4FFF]' : 'bg-[#FF5A36]' }}">
-                            R$ {{ number_format($produto->preco, 2, ',', '.') }}
+                        <div class="relative">
+                            @if ($produto->imagem)
+                                <img src="{{ asset('storage/' . $produto->imagem) }}" alt="{{ $produto->nome }}"
+                                     class="w-full h-40 object-cover">
+                            @else
+                                <div class="w-full h-40 bg-gray-50 flex items-center justify-center">
+                                    <span class="text-gray-300 text-xs">Sem imagem</span>
+                                </div>
+                            @endif
+
+                            <div style="font-family: 'IBM Plex Mono', monospace; transform: rotate(3deg);"
+                                 class="absolute -bottom-2.5 right-4 text-white text-xs font-medium px-2.5 py-1 rounded
+                                        {{ $produto->estoque > 0 ? 'bg-[#2D4FFF]' : 'bg-[#FF5A36]' }}">
+                                R$ {{ number_format($produto->preco, 2, ',', '.') }}
+                            </div>
                         </div>
 
-                        <p style="font-family: 'Space Grotesk', sans-serif;" class="font-medium text-[15px] text-gray-900 mt-2">
-                            {{ $produto->nome }}
-                        </p>
-                        <p class="text-xs text-gray-500 mt-1 mb-4 min-h-[2rem]">
-                            {{ Str::limit($produto->descricao, 60) }}
-                        </p>
+                        <div class="p-5 pt-6">
+                            <p style="font-family: 'Space Grotesk', sans-serif;" class="font-medium text-[15px] text-gray-900">
+                                {{ $produto->nome }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1 mb-4 min-h-[2rem]">
+                                {{ Str::limit($produto->descricao, 60) }}
+                            </p>
 
-                        <div class="flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full {{ $produto->estoque > 0 ? 'bg-[#1F9D55]' : 'bg-[#E24B4A]' }}"></span>
-                            @if ($produto->estoque > 0)
-                                <span class="text-xs text-gray-500">{{ $produto->estoque }} em estoque</span>
-                            @else
-                                <span class="text-xs text-[#993C1D]">Esgotado</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full {{ $produto->estoque > 0 ? 'bg-[#1F9D55]' : 'bg-[#E24B4A]' }}"></span>
+                                @if ($produto->estoque > 0)
+                                    <span class="text-xs text-gray-500">{{ $produto->estoque }} em estoque</span>
+                                @else
+                                    <span class="text-xs text-[#993C1D]">Esgotado</span>
+                                @endif
+                            </div>
+
+                            @if (auth()->user()->isAdmin())
+                                <div class="flex gap-3 mt-4 pt-4 border-t border-gray-100 text-xs">
+                                    <a href="{{ route('produtos.edit', $produto) }}" class="text-[#2D4FFF] font-medium">Editar</a>
+                                    <form action="{{ route('produtos.destroy', $produto) }}" method="POST"
+                                          onsubmit="return confirm('Excluir este produto?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-[#993C1D] font-medium">Excluir</button>
+                                    </form>
+                                </div>
                             @endif
                         </div>
-
-                        @if (auth()->user()->isAdmin())
-                            <div class="flex gap-3 mt-4 pt-4 border-t border-gray-100 text-xs">
-                                <a href="{{ route('produtos.edit', $produto) }}" class="text-[#2D4FFF] font-medium">Editar</a>
-                                <form action="{{ route('produtos.destroy', $produto) }}" method="POST"
-                                      onsubmit="return confirm('Excluir este produto?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-[#993C1D] font-medium">Excluir</button>
-                                </form>
-                            </div>
-                        @endif
                     </div>
                 @empty
                     <div class="col-span-full text-center py-16 text-gray-400 text-sm">

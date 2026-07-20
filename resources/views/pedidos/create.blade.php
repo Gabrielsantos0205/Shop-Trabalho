@@ -27,12 +27,22 @@
                     <div class="space-y-2 mb-6">
                         @forelse ($produtos as $produto)
                             <div class="flex items-center justify-between border border-gray-100 rounded-lg px-4 py-3">
-                                <div>
-                                    <p style="font-family: 'Space Grotesk', sans-serif;" class="font-medium text-sm text-gray-900">{{ $produto->nome }}</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">
-                                        <span style="font-family: 'IBM Plex Mono', monospace;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
-                                        · {{ $produto->estoque }} em estoque
-                                    </p>
+                                <div class="flex items-center gap-3">
+                                    @if ($produto->imagem)
+                                        <img src="{{ asset('storage/' . $produto->imagem) }}" alt="{{ $produto->nome }}"
+                                             class="w-12 h-12 object-cover rounded-lg border border-gray-100">
+                                    @else
+                                        <div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center">
+                                            <span class="text-gray-300 text-[10px]">Sem foto</span>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <p style="font-family: 'Space Grotesk', sans-serif;" class="font-medium text-sm text-gray-900">{{ $produto->nome }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">
+                                            <span style="font-family: 'IBM Plex Mono', monospace;">R$ {{ number_format($produto->preco, 2, ',', '.') }}</span>
+                                            · {{ $produto->estoque }} em estoque
+                                        </p>
+                                    </div>
                                 </div>
                                 <input type="hidden" name="produto_id[]" value="{{ $produto->id }}">
                                 <input type="number" name="quantidade[]" min="0" max="{{ $produto->estoque }}"

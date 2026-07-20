@@ -34,9 +34,16 @@ class ProdutoController extends Controller
             'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',
             'estoque' => 'required|integer|min:0',
+            'imagem' => 'nullable|image|max:2048',
         ]);
 
-        Produto::create($request->only('nome', 'descricao', 'preco', 'estoque'));
+        $dados = $request->only('nome', 'descricao', 'preco', 'estoque');
+
+        if ($request->hasFile('imagem')) {
+            $dados['imagem'] = $request->file('imagem')->store('produtos', 'public');
+        }
+
+        Produto::create($dados);
 
         return redirect()->route('produtos.index')->with('msg', 'Produto cadastrado com sucesso!');
     }
@@ -53,15 +60,29 @@ class ProdutoController extends Controller
             'descricao' => 'nullable|string',
             'preco' => 'required|numeric|min:0',
             'estoque' => 'required|integer|min:0',
+            'imagem' => 'nullable|image|max:2048',
         ]);
 
-        $produto->update($request->only('nome', 'descricao', 'preco', 'estoque'));
+        $dados = $request->only('nome', 'descricao', 'preco', 'estoque');
+
+        if ($request->hasFile('imagem')) {
+            if ($produto->imagem) {
+                \Storage::disk('public')->delete($produto->imagem);
+            }
+            $dados['imagem'] = $request->file('imagem')->store('produtos', 'public');
+        }
+
+        $produto->update($dados);
 
         return redirect()->route('produtos.index')->with('msg', 'Produto atualizado!');
     }
 
     public function destroy(Produto $produto)
     {
+        if ($produto->imagem) {
+            \Storage::disk('public')->delete($produto->imagem);
+        }
+
         $produto->delete();
         return redirect()->route('produtos.index')->with('msg', 'Produto removido!');
     }

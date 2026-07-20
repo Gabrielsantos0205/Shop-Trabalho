@@ -19,7 +19,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('produtos.store') }}" class="space-y-4">
+                <form method="POST" action="{{ route('produtos.store') }}" enctype="multipart/form-data" class="space-y-4">
                     @csrf
 
                     <div>
@@ -45,6 +45,16 @@
                             <input type="number" name="estoque" value="{{ old('estoque') }}" required
                                    class="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:border-[#2D4FFF] focus:ring-[#2D4FFF]">
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Imagem do produto</label>
+                        <input type="file" name="imagem" accept="image/*"
+                               class="mt-1 block w-full text-sm text-gray-600
+                                      file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
+                                      file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700
+                                      hover:file:bg-gray-200">
+                        <p class="text-xs text-gray-400 mt-1">JPG ou PNG, até 2MB. Opcional.</p>
                     </div>
 
                     <div class="flex gap-3 pt-2">
